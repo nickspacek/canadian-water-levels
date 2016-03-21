@@ -79,8 +79,8 @@
   <section id="main">
     <h1>{{ .Title }}</h1>
     <p>{{ .Content }}</p>
-    <div>{{ .Params.province }}</div>
-    <div>{{ .Params.levels.scale }}</div>
+    <iframe width="400" height="250" frameborder="0" style="border:0"
+      src="https://www.google.com/maps/embed/v1/place?q={{.Params.coordinates}}&key={{.Site.Params.mapsApi}}" allowfullscreen></iframe>
     <div id="chart"></div>
   </section>
 

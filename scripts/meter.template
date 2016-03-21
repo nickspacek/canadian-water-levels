@@ -1,0 +1,10 @@
++++
+  title = "{{ meter.title }}"
+  provinces = ["{{ meter.province }}"]
+  coordinates = "{{ meter.coordinates.latitude }},{{ meter.coordinates.longitude }}"
++++
+
+<!--more-->
+<script>
+var meter = {{ meter|json(2)|safe }};
+</script>

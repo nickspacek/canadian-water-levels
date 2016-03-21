@@ -2,15 +2,18 @@ baseurl = "http://replace-this-with-your-hugo-site.com/"
 languageCode = "en-us"
 title = "Canadian Water Levels"
 
+[params]
+mapsApi = "AIzaSyDurAwOFQl42w-h23rtk6TKIMVSV07HjTI"
+
 [taxonomies]
 province = "provinces"
 category = "categories"
 
 [[menu.main]]
-name = "Blog"
+name = "News"
 weight = -120
-identifier = "blog"
-url = "/posts/"
+identifier = "news"
+url = "/post/"
 
 [[menu.main]]
 name = "About"
@@ -22,4 +25,4 @@ url = "/about/"
 name = "Meters"
 weight = -115
 identifier = "meters"
-url = "/meters/"
+url = "/meter/"
