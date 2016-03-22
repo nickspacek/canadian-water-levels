@@ -20,9 +20,8 @@ google.charts.load('current', {'packages':['corechart']});
       var options = {
         title: 'Past 24 Hours',
         curveType: 'function',
-        width: 900,
-        height: 500,
-        vAxis: { format: '#.000' }
+        vAxis: { format: '#.000' },
+        legend: { position: 'bottom' }
       };
 
       var chart = new google.visualization.LineChart(document.getElementById('chart'));

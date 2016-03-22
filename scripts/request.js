@@ -22,7 +22,6 @@ function getFile(config, options) {
   const responseDir = `${config.cacheDir}/${requestDir}`;
   console.log(`creating dir for tmp files if not exists ${responseDir}`);
   mkdirp(responseDir);
-  process.exit(1);
 }
 
 function cachedOrResponse(config, options, callback) {

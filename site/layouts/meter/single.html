@@ -1,102 +1,183 @@
-<!DOCTYPE html>
-<html lang="{{.Site.LanguageCode}}">
-<head>
+{{ partial "header.html" . }}
+{{ $baseurl := .Site.BaseURL }}
 
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<style>#chart { width: 400px; height: 250px; }</style>
 
-  	<meta property="og:title" content="{{ if ne .URL "/" }} {{ .Title }} &middot; {{ end }} {{ .Site.Title }}" />
-  	<meta property="og:site_name" content="{{ .Site.Title }}" />
-  	<meta property="og:url" content="{{ .Permalink }}" />
+{{if .Params.image}}
+<header class="main-header post-head" style="background-image: url({{ $baseurl }}{{.Params.image}})">
+  <nav class="main-nav overlay clearfix">
+{{else}}
+<header class="main-header post-head no-cover">
+    <nav class="main-nav overlay clearfix">
+{{end}}
 
-    {{ if .IsPage }}
-  	<meta property="og:type" content="article" />
-
-    <meta property="og:article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" | safeHTML }}" />
-
-    {{ range .Params.tags }}
-    <meta property="og:article:tag" content="{{ . }}" />
-    {{ end }}
-    {{ else }}
-    <meta property="og:type" content="website" />
-    {{ end }}
-
-  <title>
-    {{ if ne .URL "/" }} {{ .Title }} &middot; {{ end }} {{ .Site.Title }}
-  </title>
-
-    <meta name="description" content="{{ .Site.Params.description }}" />
-
-    <meta name="HandheldFriendly" content="True" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="{{.Site.BaseURL}}images/favicon.ico">
-	  <link rel="apple-touch-icon" href="{{.Site.BaseURL}}images/apple-touch-icon.png" />
-
-    <link rel="stylesheet" type="text/css" href="{{.Site.BaseURL}}css/screen.css" />
-    <link rel="stylesheet" type="text/css" href="{{.Site.BaseURL}}css/nav.css" />
-    <link rel="stylesheet" type="text/css" href="{{.Site.BaseURL}}css/nv.d3.min.css" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400|Inconsolata" />
-
-
-    {{ if .Site.Params.RSSLink}}
-        <link href="{{.Site.Params.RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
-    {{else}}
-      {{ if ne .URL "/" }}
-          <link href="{{ .Site.BaseURL }}index.xml" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
-      {{ end }}
-      {{if .IsNode}}
-        <link href="{{.RSSLink}}" rel="alternate" type="application/rss+xml" title="{{ if ne .URL "/" }}{{ .Title }} &middot; {{ end }}{{ .Site.Title }}" />
+      {{ if .Site.Params.logo }}
+        <a class="blog-logo" href="{{.Site.BaseURL}}"><img src="{{.Site.BaseURL}}{{ .Site.Params.logo }}" alt="Home" /></a>
       {{end}}
+      {{ if .Site.Menus.main }}
+          <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+      {{else}}
+        {{ if .Site.Params.RSSLink}}
+          <a class="menu-button icon-feed" href="{{.Site.Params.RSSLink }}">&nbsp;&nbsp;Subscribe</a>
+        {{else}}
+          <a class="menu-button icon-feed" href="{{ .RSSLink }}">&nbsp;&nbsp;Subscribe</a>
+        {{end}}
+      {{end}}
+    </nav>
+
+    {{if eq .Params.index true}}
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">{{.Title}}</h1>
+            <h2 class="page-description">
+                {{if .Params.description}}
+                    {{.Params.description}}
+                {{end}}
+            </h2>
+        </div>
+    </div>
     {{end}}
-    {{.Hugo.Generator}}
 
-    <link rel="canonical" href="{{ .Permalink }}" />
 
-    {{with  .Site.Params.googleAnalyticsUserID }}
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+</header>
 
-      ga('create', '{{.}}', 'auto');
-      ga('send', 'pageview');
 
-    </script>
-    {{end}}
 
-    {{ if .Site.Params.customHeaderPartial }}
-        {{ partial .Site.Params.customHeaderPartial . }}
-    {{ end }}
-</head>
-<body class="nav-closed">
+<main class="content" role="main">
 
-  {{ partial "navigation.html" . }}
 
- <div class="site-wrapper">
 
-  <section id="main">
-    <h1>{{ .Title }}</h1>
-    <p>{{ .Content }}</p>
-    <iframe width="400" height="250" frameborder="0" style="border:0"
-      src="https://www.google.com/maps/embed/v1/place?q={{.Params.coordinates}}&key={{.Site.Params.mapsApi}}" allowfullscreen></iframe>
+
+  <article class="post {{ .Section }}">
+    <header class="post-header">
+      <nav class="breadcrumb">
+        {{ $currentNode := . }}
+        {{ range .Site.Menus.main }}
+        {{if or ($currentNode.IsMenuCurrent "main" .) ($currentNode.HasMenuCurrent "main" .)}}
+        <li><a href="{{.URL}}">{{.Name}}</a></li>
+              {{ range .Children }}
+              {{ if .HasChildren }}
+              {{if or ($currentNode.IsMenuCurrent "main" .) ($currentNode.HasMenuCurrent "main" .)}}
+                <li><a href="{{.URL}}">{{.Name}}</a></li>
+                  {{ range .Children }}
+                  {{ if .HasChildren }}
+                  {{if or ($currentNode.IsMenuCurrent "main" .) ($currentNode.HasMenuCurrent "main" .)}}
+                    <li><a href="{{.URL}}">{{.Name}}</a></li>
+                  {{end}}
+                  {{end}}
+                  {{end}}
+              {{end}}
+              {{end}}
+              {{end}}
+        {{end}}
+        {{end}}
+        <!-- <li>{{.Title}}</li> -->
+      </nav>
+
+
+        <h1 class="post-title">{{.Title}}</h1>
+        <small>{{.Description}}</small>
+
+        <section class="post-meta">
+        {{ if eq .Section "post"}}
+          <time class="post-date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" | safeHTML }}">
+            {{ .Date.Format "Jan 2, 2006" }}
+          </time>
+        {{end}}
+         {{ range .Params.tags }}
+          <span class="post-tag small"><a href="{{ $baseurl }}tags/{{ . | urlize }}/">#{{ . }}</a></span>
+         {{ end }}
+        </section>
+    </header>
+
+    <section class="post-content">
+
+
+{{ .Content }}
+
+  <header class="meter-header">
+<!--    <iframe width="400" height="250" frameborder="0" style="border:0"
+      src="https://www.google.com/maps/embed/v1/view?zoom=14&center={{.Params.coordinates}}&maptype=satellite&key={{.Site.Params.mapsApi}}" allowfullscreen></iframe> -->
+    <a target="meter-pop" href="https://maps.google.com/?q={{.Params.coordinates}}">
+      <img src="https://maps.googleapis.com/maps/api/staticmap?center={{.Params.coordinates}}&zoom=14&size=400x250&maptype=hybrid&markers=color:blue%7Clabel:M%7C{{.Params.coordinates}}&key={{.Site.Params.mapsApi}}" />
+    </a>
+  </header>
+  <section class="meter-body">
     <div id="chart"></div>
   </section>
 
-  <!-- TODO extract to footer file -->
 
-  <footer class="site-footer clearfix">
-    <section class="copyright"><a href="">{{.Site.Title}}</a> {{.Site.Copyright}}</section>
-    {{if ne .Site.Params.hideHUGOSupport true}}
-    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+{{if ne .Params.index true}}
+{{if .Menus.main.HasChildren }}
+<nav class="navchildren">
+  <ul>
+    <!-- Children contents -->
+
+    {{ range .Menus.main.Children }}
+    <li><a href="{{.URL}}" >{{ .Name }}</a></li>
+    {{ end }}
+
+  </ul>
+</nav>
+{{ end }}
+{{ end }}
+
+{{if eq .Params.index true}}
+<nav class="navpage">
+
+{{ $currentNode := . }}
+{{ range .Site.Menus.main }}
+{{if or ($currentNode.IsMenuCurrent "main" .) ($currentNode.HasMenuCurrent "main" .)}}
+      {{ range .Children }}
+      <ul>
+      <li><a href="{{.URL}}">{{.Name}}</a>
+      {{ if .HasChildren }}
+        <ul>
+        {{ range .Children }}
+          <li><a href="{{.URL}}">{{.Name}}</a>
+          {{ if .HasChildren }}
+            <ul>
+            {{ range .Children }}
+            <li><a href="{{.URL}}">{{ .Name }}</a></li>
+            {{ end }}
+            </ul>
+          {{ end }}
+        {{ end }}
+        </ul>
+      {{ end }}
+      </li>
+      </ul>
+      {{ end }}
+
+
+{{end}}
+{{end}}
+
+</nav>
+{{end}}
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    {{if .Site.Params.logo}}
+    <figure class="author-image">
+        <a class="img" href="{{.Site.BaseURL}}" style="background-image: url({{ $baseurl }}{{.Site.Params.logo}})"><span class="hidden">{{.Site.Params.author}}'s Picture</span></a>
+    </figure>
     {{end}}
+
+    {{ partial "author.html" . }}
+
+    {{ partial "share.html" . }}
+
+    {{ partial "disqus.html" . }}
+
   </footer>
-  </div>
-  <script type="text/javascript" src="{{.Site.BaseURL}}js/jquery.js"></script>
-  <script type="text/javascript" src="{{.Site.BaseURL}}js/jquery.fitvids.js"></script>
-  <script type="text/javascript" src="{{.Site.BaseURL}}js/index.js"></script>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript" src="{{.Site.BaseURL}}js/meter-charts.js"></script>
-</body>
-</html>
+</article>
+
+</main>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="{{.Site.BaseURL}}js/meter-charts.js"></script>
+{{ partial "footer.html" . }}

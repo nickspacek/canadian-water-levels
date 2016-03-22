@@ -1,13 +1,17 @@
-const Promise = require('bluebird');
-import requestBuilder from './request';
-const csv = require('fast-csv');
+import Promise from 'bluebird';
+import csv from 'fast-csv';
+
+import request from 'request';
 
 import { ColumnMeterDataTransformer, MeterConverter, MeterWriter } from './meters';
 import { ColumnStationListTransformer } from './stations';
 
-const request = requestBuilder();
+const client = request.defaults({
+  baseUrl: 'http://dd.weather.gc.ca/',
+  proxy: 'http://localhost:8111'
+});
 
-const stationListUrl = 'http://dd.weather.gc.ca/hydrometric/doc/hydrometric_StationList.csv';
+const stationListUrl = '/hydrometric/doc/hydrometric_StationList.csv';
 function getStationList() {
   const csvStream = csv();
   const stationListStream = new ColumnStationListTransformer();
@@ -15,7 +19,7 @@ function getStationList() {
   return new Promise((resolve, reject) => {
     const stations = [];
     try {
-      request({ url: stationListUrl })
+      client({ url: stationListUrl })
         .pipe(csvStream)
         .pipe(stationListStream)
         .on('data', station => { stations.push(station); })
@@ -29,7 +33,7 @@ function getStationList() {
   });
 }
 
-const url = 'http://dd.weather.gc.ca/hydrometric/csv/';
+const url = '/hydrometric/csv/';
 function processProvinces(stations, provinces) {
   const stationsById = stations.reduce((map, station) => {
     map[station.id] = station;
@@ -45,7 +49,7 @@ function processProvinces(stations, provinces) {
     const rawDataTransformer = new ColumnMeterDataTransformer();
     const meterConverter = new MeterConverter(stationsById);
     const meterWriter = new MeterWriter(`./meters/${provinceFolder}`);
-    const stream = request({ url: dataUrl })
+    const stream = client({ url: dataUrl })
       .pipe(csvStream)
       .pipe(rawDataTransformer)
       .pipe(meterConverter)
@@ -61,7 +65,8 @@ function processProvinces(stations, provinces) {
 
 const provinces = [{ short: 'NB', name: 'New Brunswick' }];
 getStationList().then(stations => {
-  console.log('Stations retrieved, syncing provinces');
+  console.log(`${stations.length} stations retrieved, syncing provinces`);
+  process.exit(1);
   processProvinces(stations, provinces).then(() => {
     console.log('Completed sync');
   });
