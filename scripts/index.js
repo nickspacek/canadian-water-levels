@@ -1,14 +1,16 @@
 import Promise from 'bluebird';
 import csv from 'fast-csv';
 
-import request from 'request';
+import buildRequester from './request';
+const request = buildRequester();
 
 import { ColumnMeterDataTransformer, MeterConverter, MeterWriter } from './meters';
 import { ColumnStationListTransformer } from './stations';
 
-const client = request.defaults({
-  baseUrl: 'http://dd.weather.gc.ca/',
-  proxy: 'http://localhost:8111'
+const client = buildRequester({
+  defaults: {
+    baseUrl: 'http://dd.weather.gc.ca/',
+  }
 });
 
 const stationListUrl = '/hydrometric/doc/hydrometric_StationList.csv';
