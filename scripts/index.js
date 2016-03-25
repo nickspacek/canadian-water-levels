@@ -68,7 +68,6 @@ function processProvinces(stations, provinces) {
 const provinces = [{ short: 'NB', name: 'New Brunswick' }];
 getStationList().then(stations => {
   console.log(`${stations.length} stations retrieved, syncing provinces`);
-  process.exit(1);
   processProvinces(stations, provinces).then(() => {
     console.log('Completed sync');
   });
