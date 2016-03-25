@@ -6,6 +6,7 @@ const request = buildRequester();
 
 import { ColumnMeterDataTransformer, MeterConverter, MeterWriter } from './meters';
 import { ColumnStationListTransformer } from './stations';
+import { provinces, territories } from './geo-data';
 
 const client = buildRequester({
   defaults: {
@@ -35,6 +36,11 @@ function getStationList() {
   });
 }
 
+function toPtObjs(map) {
+  return Object.keys(map)
+    .map(abbr => ({ short: abbr, name: map[abbr] }));
+}
+
 const url = '/hydrometric/csv/';
 function processProvinces(stations, provinces) {
   const stationsById = stations.reduce((map, station) => {
@@ -49,7 +55,7 @@ function processProvinces(stations, provinces) {
 
     const csvStream = csv();
     const rawDataTransformer = new ColumnMeterDataTransformer();
-    const meterConverter = new MeterConverter(stationsById);
+    const meterConverter = new MeterConverter(stationsById, provinceEntry);
     const meterWriter = new MeterWriter(`./meters/${provinceFolder}`);
     const stream = client({ url: dataUrl })
       .pipe(csvStream)
@@ -58,18 +64,24 @@ function processProvinces(stations, provinces) {
       .pipe(meterWriter);
     return new Promise((resolve, reject) => {
       stream.on('end', () => {
+        console.log(`Completed province ${province}`);
         resolve();
+      }).on('error', e => {
+        console.error('Problem in stream', e);
       });
     });
   });
   return Promise.all(promises);
 }
 
-const provinces = [{ short: 'NB', name: 'New Brunswick' }];
+console.log('Starting processing', new Date());
 getStationList().then(stations => {
   console.log(`${stations.length} stations retrieved, syncing provinces`);
-  processProvinces(stations, provinces).then(() => {
-    console.log('Completed sync');
+  const pt = [ ...toPtObjs(provinces), ...toPtObjs(territories) ];
+  processProvinces(stations, pt).then(() => {
+    console.log('Completed processing', new Date());
+  }).catch(e => {
+    console.error('Problem processing provinces', e);
   });
 }).catch(e => {
   console.error('Problem retrieving stations', e);

@@ -2,9 +2,10 @@ const Promise = require('bluebird');
 const stream = require('stream');
 const swig = require('swig');
 const fs = require('fs');
+const path = require('path');
+const mkdirp = require('mkdirp');
 const moment = require('moment');
 const csv = require('fast-csv');
-const Duplex = require('duplex');
 const toTitleCase = require('titlecase').toLaxTitleCase;
 
 function parseReadingDate(dateString) {
@@ -67,9 +68,10 @@ export class ColumnMeterDataTransformer extends stream.Transform {
 }
 
 export class MeterConverter extends stream.Transform {
-  constructor(stations) {
+  constructor(stations, province) {
     super({ objectMode: true });
     this.stations = stations;
+    this.province = province;
   }
 
   _transform(chunk, encoding, done) {
@@ -94,7 +96,7 @@ export class MeterConverter extends stream.Transform {
     return {
       id: rawMeter.id,
       title: toTitleCase(meter.name.toLowerCase()),
-      province: 'New Brunswick',
+      province: this.province.name,
       provinceCode: meter.provinceCode,
       coordinates: meter.coordinates,
       levels: {
@@ -127,12 +129,17 @@ export class MeterWriter extends stream.Writable {
         if (err) {
           reject(err);
         }
-        const path = `${this.path}/${meter.id}.html`;
-        fs.writeFile(path, output, err => {
+        const meterPath = `${this.path}/${meter.id}.html`;
+        mkdirp(path.dirname(meterPath), err => {
           if (err) {
             reject(err);
           }
-          resolve();
+          fs.writeFile(meterPath, output, err => {
+            if (err) {
+              reject(err);
+            }
+            resolve();
+          });
         });
       });
     });

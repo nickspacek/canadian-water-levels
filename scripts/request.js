@@ -59,7 +59,6 @@ function cachedOrResponse(config, requestOptions, client) {
     .on('response', res => {
       if (res.statusCode === 304) {
         // Return file stream
-        console.log('status code 304');
         response.resume();
         fs.createReadStream(file).pipe(responseStream);
         return;
