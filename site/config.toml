@@ -28,7 +28,7 @@ province = "provinces"
 
 	# Custom assets
 	custom_css = ["stylesheets/list.css"]
-	custom_js  = []
+	custom_js  = ["https://www.gstatic.com/charts/loader.js", "javascripts/meter-charts.js"]
 
 	[params.palette]
     	primary = "blue"
