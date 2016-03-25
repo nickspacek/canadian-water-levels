@@ -1,0 +1,28 @@
+baseurl = "http://replace-this-with-your-hugo-site.com/"
+languageCode = "en-us"
+title = "Canadian Water Levels"
+
+[params]
+mapsApi = "AIzaSyDurAwOFQl42w-h23rtk6TKIMVSV07HjTI"
+
+[taxonomies]
+province = "provinces"
+category = "categories"
+
+[[menu.main]]
+name = "News"
+weight = -120
+identifier = "news"
+url = "/post/"
+
+[[menu.main]]
+name = "About"
+weight = -110
+identifier = "about"
+url = "/about/"
+
+[[menu.main]]
+name = "Meters"
+weight = -115
+identifier = "meters"
+url = "/meter/"

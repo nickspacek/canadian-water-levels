@@ -1,1 +1,1 @@
-hugo server -t casper -ws . -d dev --verbose
+hugo server -ws . -d dev --verbose

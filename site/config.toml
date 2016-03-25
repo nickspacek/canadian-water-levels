@@ -1,28 +1,67 @@
-baseurl = "http://replace-this-with-your-hugo-site.com/"
+baseurl = "http://waterlevels.ca/"
 languageCode = "en-us"
 title = "Canadian Water Levels"
+theme = "hugo-material-docs"
+metadataformat = "yaml"
+canonifyurls = true
+googleAnalytics = ""
 
 [params]
-mapsApi = "AIzaSyDurAwOFQl42w-h23rtk6TKIMVSV07HjTI"
+	# General information
+	author = "Nick Spacek"
+	description = "A site for publishing water levels around Canada"
+	copyright = "Released under the MIT license"
 
-[taxonomies]
-province = "provinces"
-category = "categories"
+	# Repository
+	provider = "GitHub"
+	repo_url = "https://github.com/nickspacek/canadian-water-levels"
+
+	version = "0.1.0"
+	logo = "images/logo.png"
+	favicon = ""
+
+	permalink = "#"
+
+	# Custom assets
+	custom_css = []
+	custom_js  = []
+
+	[params.palette]
+    	primary = "blue"
+    	accent  = "light green"
+
+    [params.font]
+    	text = "Ubuntu"
+    	code = "Ubuntu Mono"
+
+
+[social]
+	twitter = ""
+	github  = "nickspacek"
+
 
 [[menu.main]]
-name = "News"
-weight = -120
-identifier = "news"
-url = "/post/"
+	name   = "Home"
+	url    = "/"
+	weight = 0
 
 [[menu.main]]
-name = "About"
-weight = -110
-identifier = "about"
-url = "/about/"
+	name   = "Meters"
+	url    = "meter/"
+	weight = 10
 
 [[menu.main]]
-name = "Meters"
-weight = -115
-identifier = "meters"
-url = "/meter/"
+	name   = "About"
+	url    = "about/"
+	weight = 30
+
+[[menu.main]]
+	name   = "News"
+	url    = "post/"
+	weight = 20
+
+[blackfriday]
+	smartypants	= true
+	fractions = true
+	smartDashes = true
+	plainIDAnchors = true
