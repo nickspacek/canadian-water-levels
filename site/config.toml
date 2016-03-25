@@ -6,6 +6,10 @@ metadataformat = "yaml"
 canonifyurls = true
 googleAnalytics = ""
 
+[taxonomies]
+tag = "tags"
+province = "provinces"
+
 [params]
 	# General information
 	author = "Nick Spacek"
