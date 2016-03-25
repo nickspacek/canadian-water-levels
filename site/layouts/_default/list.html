@@ -26,7 +26,13 @@
 		<div class="wrapper">
 			<h1>{{ .Title }}</h1>
 
-			{{ .Content }}
+      <!-- pagination -->
+      {{ template "_internal/pagination.html" . }}
+      <ul>
+        {{ range .Paginator.Pages }}
+        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+        {{ end }}
+      </ul>
 
 			<aside class="copyright" role="note">
 				{{ with .Site.Params.copyright }}
