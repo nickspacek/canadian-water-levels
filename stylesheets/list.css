@@ -1,0 +1,16 @@
+.pagination {
+  list-style: none;
+  height: auto;
+}
+
+.pagination li {
+  float: left;
+}
+
+.article .pagination li:before {
+  content: none;
+}
+
+.pagination li.active a {
+  font-weight: bold;
+}
